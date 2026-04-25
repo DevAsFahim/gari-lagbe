@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import { Lock, Mail, X } from "lucide-react";
+import { Lock, Mail, User, X } from "lucide-react";
 import Image from "next/image";
 
 interface IProps {
@@ -17,21 +17,24 @@ const AuthModal = ({ open, onClose }: IProps) => {
       {open && (
         <>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            onClick={onClose}
-            className="fixed inset-0 z-90 bg-black/80 backdrop-blur-md "
-          ></motion.div>
-          <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="fixed inset-0 z-100 flex items-center justify-center px-4"
           >
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              onClick={onClose}
+              className="fixed inset-0 bg-black/80 backdrop-blur-md "
+            ></motion.div>
             <div className="relative w-full max-w-md rounded-3xl bg-white border border-black/10 shadow-[0_40px_100px_rgba(0,0,0,0.35)] p-6 sm:p-8">
-              <div className="absolute right-4 top-4 text-gray-500 hover:text-black transition">
+              <button
+                onClick={onClose}
+                className="absolute right-4 top-4 text-gray-500 hover:text-black transition cursor-pointer"
+              >
                 <X size={20} />
-              </div>
+              </button>
 
               <div className="mb-6 text-center">
                 <h1 className="text-3xl font-extrabold tracking-widest">
@@ -53,7 +56,7 @@ const AuthModal = ({ open, onClose }: IProps) => {
                 <div className="flex-1 h-px bg-black/10" />
               </div>
 
-              {/* {step === 'login' && <Login />} */}
+              {/* login */}
               {step === "login" && (
                 <motion.div
                   initial={{ opacity: 0, x: 20 }}
@@ -92,6 +95,59 @@ const AuthModal = ({ open, onClose }: IProps) => {
                       onClick={() => setStep("signup")}
                     >
                       Sign Up
+                    </span>
+                  </p>
+                </motion.div>
+              )}
+
+              {/* signup */}
+              {step === "signup" && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  <h1 className="text-xl font-semibold">Create an Account</h1>
+
+                  <div className="mt-5 space-y-4">
+                    <div className="flex items-center gap-3 border border-black/20 rounded-xl px-4 py-3">
+                      <User size={18} className="text-gray-500" />
+                      <input
+                        type="text"
+                        placeholder="Full Name"
+                        className="w-full bg-transparent outline-none text-sm"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-3 border border-black/20 rounded-xl px-4 py-3">
+                      <Mail size={18} className="text-gray-500" />
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full bg-transparent outline-none text-sm"
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-3 border border-black/20 rounded-xl px-4 py-3">
+                      <Lock size={18} className="text-gray-500" />
+                      <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full bg-transparent outline-none text-sm"
+                      />
+                    </div>
+
+                    <button className="w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition cursor-pointer">
+                      Signup
+                    </button>
+                  </div>
+
+                  <p className="mt-6 text-center text-sm text-gray-500">
+                    Already have an account?
+                    <span
+                      className="text-black hover:underline cursor-pointer font-medium block"
+                      onClick={() => setStep("login")}
+                    >
+                      Login
                     </span>
                   </p>
                 </motion.div>
