@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
+    console.log('iam in')
     const { name, email, password } = await req.json();
     await connectDB();
 

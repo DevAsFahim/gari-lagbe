@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { motion } from "motion/react";
-import { Lock, Mail, User, X } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
+import { CircleDashed, Lock, Mail, User, X } from "lucide-react";
 import Image from "next/image";
+import axios from "axios";
 
 interface IProps {
   open: boolean;
@@ -9,21 +10,46 @@ interface IProps {
 }
 
 type stepType = "login" | "signup" | "otp";
+
 const AuthModal = ({ open, onClose }: IProps) => {
   const [step, setStep] = useState<stepType>("login");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSignup = async () => {
+    try {
+      setLoading(true);
+      const { data } = await axios.post("/api/auth/register", {
+        name,
+        email,
+        password,
+      });
+      console.log(data);
+      setLoading(false);
+    } catch (err: any) {
+      setLoading(false);
+
+      setError(err.response.data.message ?? "Something went wrong");
+    }
+  };
 
   return (
-    <>
+    <AnimatePresence>
       {open && (
         <>
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 40 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
+            exit={{ opacity: 0, scale: 0.95, y: 40 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="fixed inset-0 z-100 flex items-center justify-center px-4"
           >
             <motion.div
               initial={{ opacity: 0 }}
+              exit={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               onClick={onClose}
               className="fixed inset-0 bg-black/80 backdrop-blur-md "
@@ -71,6 +97,8 @@ const AuthModal = ({ open, onClose }: IProps) => {
                         type="email"
                         placeholder="Email"
                         className="w-full bg-transparent outline-none text-sm"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
 
@@ -80,6 +108,8 @@ const AuthModal = ({ open, onClose }: IProps) => {
                         type="password"
                         placeholder="Password"
                         className="w-full bg-transparent outline-none text-sm"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
 
@@ -115,6 +145,8 @@ const AuthModal = ({ open, onClose }: IProps) => {
                         type="text"
                         placeholder="Full Name"
                         className="w-full bg-transparent outline-none text-sm"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                       />
                     </div>
 
@@ -124,6 +156,8 @@ const AuthModal = ({ open, onClose }: IProps) => {
                         type="email"
                         placeholder="Email"
                         className="w-full bg-transparent outline-none text-sm"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
                       />
                     </div>
 
@@ -133,11 +167,30 @@ const AuthModal = ({ open, onClose }: IProps) => {
                         type="password"
                         placeholder="Password"
                         className="w-full bg-transparent outline-none text-sm"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                       />
                     </div>
 
-                    <button className="w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition cursor-pointer">
-                      Signup
+                    {error && (
+                      <p className="text-sm text-red-500 text-center">
+                        {error}
+                      </p>
+                    )}
+
+                    <button
+                      onClick={handleSignup}
+                      disabled={loading}
+                      className="w-full h-11 rounded-xl bg-black text-white font-semibold hover:bg-gray-900 transition cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {loading ? (
+                        <CircleDashed
+                          size={20}
+                          className="animate-spin mx-auto"
+                        />
+                      ) : (
+                        "Sign Up"
+                      )}
                     </button>
                   </div>
 
@@ -156,7 +209,7 @@ const AuthModal = ({ open, onClose }: IProps) => {
           </motion.div>
         </>
       )}
-    </>
+    </AnimatePresence>
   );
 };
 
